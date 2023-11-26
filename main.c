@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "board.h"
+#include "board.c"
 
 #define MAX_CHARNAME  200
 #define MAX_DIE       6
@@ -17,7 +18,6 @@ char player_name[N_PLAYER][MAX_CHARNAME];
 int player_coin [N_PLAYER];
 int player_status[N_PLAYER]; //0 - live, 1 - die, 2 - end
 char player_statusString[3][MAX_CHARNAME] = {"LIVE", "DIE", "END"}; 
-//if (player_status[0] = PLAYERSTATUS_LIVE) "0번 플레이어가 살아 있다면" 조건문  
 
 int game_end(void);
 
@@ -37,7 +37,7 @@ int rolldie (void)
 	return rand()%MAX_DIE+1;
 }
 
-void printPlayerPosition (int player)
+void printPlayerPosition(int player)
 {
 	int i;
 	for(i=0; i<N_BOARD; i++)
@@ -59,9 +59,10 @@ void printPlayerPosition (int player)
  void printPlayerStatus(void)
 {
  	int i;
+ 	printf("player statys ---\n");
  	for (i=0; i<N_PLAYER; i++)
  	{
- 		printf("%s : pos %i, coin %i, status %i\n", player_name[i], player_position[i], player_coin[i], player_status[i]);
+ 		printf("%s : pos %i, coin %i, status %i\n", player_name[i], player_position[i], player_coin[i], player_statusString[player_status[i]]);
  	}
  	printf("--------------------\n");
 }
@@ -118,14 +119,7 @@ int main(int argc, char *argv[])
 		{
 			printPlayerPosition (i);
 		}
-		
-		pos += step;
-		coinResult = board_getBoardCoin(pos);
-	printf("press any key to continue:");
-	scanf("%d", &c);
-	fflush(stdin);
-		
-	printPlayerStatus();	
+		printPlayerStatus();	
 	
 	 //2-2. 주사위 던지기
 	 printf("%s turn! \n", player_name[turn]);
