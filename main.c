@@ -19,6 +19,8 @@ int player_status[N_PLAYER]; //0 - live, 1 - die, 2 - end
 char player_statusString[3][MAX_CHARNAME] = {"LIVE", "DIE", "END"}; 
 //if (player_status[0] = PLAYERSTATUS_LIVE) "0번 플레이어가 살아 있다면" 조건문  
 
+int game_end(void);
+
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
 void opening(void)
@@ -141,22 +143,77 @@ int main(int argc, char *argv[])
 	}
 	if (player_position[turn] == N_BOARD-1)
 	        player_status[turn] = PLAYERSTATUS_END;
-	//printf()
+	printf("Die result : %i, %s moved to %i\n", step, player_name[turn], player_position[turn]);
+	
+	if (player_position[turn] == N_BOARD-1)
+	printf("%s reached to the end! (coin : %i)\n", player_name[turn], player_coin[turn]);
 	
 	 //2-4. 동전 줍기
-	 coinResult = board_getBoardCoin(pos);
+	 coinResult = board_getBoardCoin(player_position[turn]);
 	 player_coin[turn] += coinResult;
+	 printf("-> Lucky! %s got %i coin!\n", player_name[turn], player_coin[turn]);
 	 
 	 //2-5. 다음 턴 
 	 turn = (turn + 1) % N_PLAYER; 
 	 
 	 //2-6. 상어 동작 (조건: 모든 플레이어가 한번씩 턴을 돔) 
+	   if (turn == 0)
+	   {
 	   //상어 동작
 	   int shar_pos = board_stepShark();
-	   checkDie();  
-    } while (1);
+	   printf("Shark moved to %i\n", shar_pos);
+	   checkDie();
+	   }
+    } while (!game_end());
     
 	//3. 정리 (승자 계산, 출력 등)  
+	int getAlivePlayer(void)
+	{
+		int i;
+		int cnt = 0;
+		for(i=0; i<N_PLAYER; i++)
+		{
+			if(player_status[i] == PLAYERSTATUS_END)
+			cnt++;
+		}
+		return cnt;
+	}
+	
+	int getWinner(void)
+	{
+		int i;
+		int winner = 0;
+		int max_coin = -1;
+		
+		for(i=0; i<N_PLAYER; i++)
+		{
+			if(player_coin[i] > max_coin)
+			{
+				max_coin = player_coin[i];
+				winner = i;
+			}
+		}
+		return winner;
+	}
+	
+	printf("GAME END!\n");
+	printf("%i player are alive! winner is %s\n", getAlivePlayer(), player_name[getWinner()]);
 	
 	return 0;
+}
+
+int game_end(void)
+{
+	int i;
+	int flag_end = 1;
+	
+	for(i=0; i<N_PLAYER; i++)
+	{
+		if(player_status[i] == PLAYERSTATUS_LIVE)
+		{
+			flag_end = 0;
+			break;
+		}
+	}
+	return flag_end;
 }

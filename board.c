@@ -45,7 +45,7 @@ int board_initboard(void)
 
 int board_printBoardStatus(void)
 {
-	int i, BOARDSTATUS_NOK;
+	int i;
 	
 	printf("----------           BOARD STATUS           ----------\n");
 	for(i=0; i<N_BOARD; i++)
@@ -66,7 +66,7 @@ int board_getBoardStatus(int pos)
 {
 	return board_status[pos]; 
 }
-int board_getBoardCoin(int pos);
+int board_getBoardCoin(int pos)
 {
 	int coin = board_coin[pos];
 	board_coin[pos] = 0;
